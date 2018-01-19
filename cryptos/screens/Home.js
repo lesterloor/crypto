@@ -1,4 +1,5 @@
 import React from "react";
+import SVGImage from "react-native-svg-image";
 import {
   Button,
   Platform,
@@ -10,7 +11,6 @@ import {
 import { DrawerNavigator, SafeAreaView } from "react-navigation";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import LoadingScreen from "../screens/LoadingScreen.js";
-
 import axios from "axios";
 import api from "../config/api.js";
 import {
@@ -31,24 +31,35 @@ export default class Home extends React.Component {
     super(props);
     this.state = {
       coinData: [],
+      topcoins: ["BTC", "LTC", "XRP", "NXT", "ETH", "BCH"],
       coin: []
     };
   }
 
   componentWillMount() {
     api.getCoinData().then(res => {
+      // console.log(res.data.result);
+
+      // console.log(Object.values(result));
+      // values = Object.values(result.data.Data).map((l, i) => {
+      //   // console.log(l.CoinName);
+      // });
+      // console.log(result);
+
       this.setState({
-        coinData: res
+        coinData: res.data.Data
       });
     });
   }
 
   render() {
     const coinData = this.state.coinData;
-    console.log(Object.keys(this.state.coinData).length);
-    console.log(coinData);
-    // console.log("Loaded? ", this.state.coinData);
-    // console.log("Loaded? ", this.state.coinData);
+    const result = Object.values(this.state.coinData);
+    let TopCoins = this.state.topcoins;
+    var TopCoinsFilter = result.filter(function(e) {
+      return TopCoins.indexOf(e.Symbol) != -1;
+    });
+    console.log(TopCoinsFilter);
     const MyNavScreen = ({ navigation, banner }) => (
       <Container>
         <Header>
@@ -65,73 +76,34 @@ export default class Home extends React.Component {
             />
           </Right>
         </Header>
-        {Object.keys(this.state.coinData).length < 0 ? (
+        {this.state.coinData.length < 1 ? (
           <Content>
-            <View>
-              <LoadingScreen />
-            </View>
+            <Text>Loading...</Text>
           </Content>
         ) : (
           <Content>
-            {coinData.map((l, i) => (
-              <ListItem
-                key={i}
-                avatar
-                style={{ marginLeft: 0 }}
-                onPress={() =>
-                  navigate("CoinChart", {
-                    coindData: l,
-                    coinName: l.name,
-                    coinPrice: l.price_usd,
-                    percentChange_1h: l.percent_change_24h,
-                    percentChange_24h: l.percent_change_24h,
-                    percentChange_7d: l.percent_change_7d,
-                    coinMarketCap: l.market_cap_usd,
-                    coinSymbol: l.symbol
-                  })
-                }
-              >
-                <Left />
-                <Body>
-                  <Text>{l.name}</Text>
-                  <Text
-                    style={{
-                      color: l.percent_change_24h.includes("-")
-                        ? "red"
-                        : "green"
-                    }}
-                    note
-                  >
-                    {l.price_usd}
-                  </Text>
-                </Body>
-                <Right>
-                  <View
-                    style={{
-                      borderRadius: 4,
-                      borderWidth: 0.5,
-                      padding: 8,
-                      borderColor: l.percent_change_24h.includes("-")
-                        ? "red"
-                        : "green"
-                    }}
-                  >
-                    <Text
-                      note
-                      style={{
-                        color: l.percent_change_24h.includes("-")
-                          ? "red"
-                          : "green"
+            <List>
+              {TopCoinsFilter.map((l, i) => (
+                <ListItem key={i} avatar>
+                  <Left>
+                    <Thumbnail
+                      square
+                      small
+                      source={{
+                        uri: `https://www.cryptocompare.com/media${l.ImageUrl}`
                       }}
-                    >
-                      {l.percent_change_24h.includes("-")
-                        ? `${l.percent_change_24h}%`
-                        : `+${l.percent_change_24h}%`}
-                    </Text>
-                  </View>
-                </Right>
-              </ListItem>
-            ))}
+                    />
+                  </Left>
+                  <Body>
+                    <Text>{l.CoinName}</Text>
+                    <Text note>{l.Symbol}</Text>
+                  </Body>
+                  <Right>
+                    <Text note>3:43 pm</Text>
+                  </Right>
+                </ListItem>
+              ))}
+            </List>
           </Content>
         )}
       </Container>
