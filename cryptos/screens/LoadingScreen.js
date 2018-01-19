@@ -5,7 +5,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Krypto Buzz</Text>
+        <Text>Loading...</Text>
       </View>
     );
   }

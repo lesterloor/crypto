@@ -17,7 +17,10 @@ import {
   Title
 } from "native-base";
 import axios from "axios";
-
+handleClick = () => {
+  this.props.updateState();
+  console.log("Pressed!!!");
+};
 const MyNavScreen = ({ navigation, banner }) => (
   <Container>
     <Header>
@@ -33,7 +36,11 @@ const MyNavScreen = ({ navigation, banner }) => (
     </Header>
     <Content>
       <List>
-        <ListItem avatar style={{ marginLeft: 0 }}>
+        <ListItem
+          onPress={() => this.handleClick}
+          avatar
+          style={{ marginLeft: 0 }}
+        >
           <Left>
             <Thumbnail source={{ uri: "Image URL" }} />
           </Left>
@@ -65,18 +72,16 @@ InboxScreen.navigationOptions = {
     />
   )
 };
-axios.get(url).then(res => {
-  const DraftsScreen = ({ navigation }) => {
-    console.log("screen");
-    return <MyNavScreen banner={titles} navigation={navigation} />;
-  };
-  return (DraftsScreen.navigationOptions = {
-    drawerLabel: "Drafts",
-    drawerIcon: ({ tintColor }) => (
-      <MaterialIcons name="drafts" size={24} style={{ color: tintColor }} />
-    )
-  });
-});
+const DraftsScreen = ({ navigation }) => {
+  console.log("screen");
+  return <MyNavScreen banner={titles} navigation={navigation} />;
+};
+DraftsScreen.navigationOptions = {
+  drawerLabel: "Drafts",
+  drawerIcon: ({ tintColor }) => (
+    <MaterialIcons name="drafts" size={24} style={{ color: tintColor }} />
+  )
+};
 
 const RootTabs = DrawerNavigator(
   {
